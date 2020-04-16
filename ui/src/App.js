@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { Map, Controls, zoomToExtent } from '@bayer/ol-kit'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+// import VectorLayer from 'ol/layer/Vector'
+// import VectorSource from 'ol/source/Vector'
+
+class App extends Component {
+  onMapInit = map => {
+    // const data = new VectorLayer({
+    //   source: new VectorSource({
+    //     features: [/** Get some data and have fun with it */]
+    //   })
+    // })
+
+    // // add the data to the map
+    // map.addLayer(data)
+
+    // quickly take the map
+    zoomToExtent([0, 0], 12)
+  }
+
+  render () {
+    return (
+      <Map>
+        <Controls />
+      </Map>
+    )
+  }
 }
 
-export default App;
+export default App
