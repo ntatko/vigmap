@@ -10,7 +10,7 @@ class Header extends Component {
         <TitleText className={'cut'}>
           {'VigilanteMap'}
         </TitleText>
-        <Dropdown loading />
+        <Dropdown loading title={'Basemap?'} />
       </HeaderWrapper>  
     )
   }

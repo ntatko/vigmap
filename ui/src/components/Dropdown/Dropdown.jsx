@@ -29,11 +29,11 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { loading, values, disabled, value, handleValueChange } = this.props
+    const { loading, values, disabled, value, handleValueChange, title } = this.props
     return(
       <DropDownContainer>
         <DropDownHeader>
-          { 'Basemap' }
+          { title }
         </DropDownHeader>
         <DropDownSelect onClick={!disabled && this.handleButtonClick.bind(this)} >
           <DisplayWindow>
