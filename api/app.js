@@ -10,6 +10,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -46,3 +48,25 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  setInterval(() => {
+    socket.broadcast.emit('sent coordinates', {
+      coords: { lat: getRandomInRange(-90, 90, 7), long: getRandomInRange(-180, 180, 7)},
+      event: 'FIRE + EMT',
+      text: '(SAINT LOUIS - ) DELAYED: SLMPD ON SCENE OF A PEDESTRIAN STRUCK BY A VEHICLE, DECEASED. DRIVER FLED. [MOU016]',
+      streamUrl: 'https://www.broadcastify.com/listen/feed/17925/web'
+    })
+  }, 3000)
+})
+
+http.listen(8081, () => {
+  console.log('accepting connections on *:8081');
+})
+
+function getRandomInRange(from, to, fixed) {
+  return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
+  // .toFixed() returns string, so ' * 1' is a trick to convert to number
+}
