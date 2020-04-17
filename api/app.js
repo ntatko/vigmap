@@ -23,9 +23,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
+// python3 speechToText.py https://broadcastify.cdnstream1.com/31035 --speech_key ef658ef9e4364e8cafba698552b6ec06
+
 app.post('/upload', upload.single('soundfile'), function (req, res, next) {
   // req.file
   console.log('do something with the upload')
+
   return res.sendStatus(200)
 })
 
