@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { Map, Controls, zoomToExtent } from '@bayer/ol-kit'
 
+import Header from './components/Header/Header'
+import Footer from './components/Footer/Footer'
+
 // import VectorLayer from 'ol/layer/Vector'
 // import VectorSource from 'ol/source/Vector'
 
@@ -21,9 +24,13 @@ class App extends Component {
 
   render () {
     return (
-      <Map>
-        <Controls />
-      </Map>
+      <React.Fragment>
+        <Map fullScreen style={{ zIndex: 1 }}>
+          <Header />
+          <Controls />
+          <Footer />
+        </Map>
+      </React.Fragment>
     )
   }
 }
