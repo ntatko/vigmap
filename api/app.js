@@ -39,6 +39,17 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
+const events = [
+  {text: 'SMOKE IN BUILDING', event: 'FIRE + EMT'},
+  {text: 'MOTOR VEHICLE ACCIDENT', event: 'FIRE + EMT'},
+  {text: 'RESIDENTIAL FIRE', event: 'FIRE + EMT'},
+  {text: 'RESIDENTIAL FIRE',event: 'FIRE + EMT'},
+  {text: 'Someone has pitched a tent in the woods near the creek.', event: 'POLICE'},
+  {text: 'Caller states $2,000 stolen from wheel well of car.', event: 'POLICE'},
+  {text: 'Two men took man\'s leafblower and green jacket. Dropped blower but still have jacket.', event: 'POLICE'}
+]
+const getEvent = () => events[getRandomInRange(0, events.length - 1, 0)];
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
@@ -56,10 +67,11 @@ module.exports = app;
 io.on('connection', (socket) => {
   console.log('a user connected');
   setInterval(() => {
+    const event = getEvent();
     socket.broadcast.emit('sent coordinates', {
       coords: { lat: getRandomInRange(19.50139, 64.85694, 7), long: getRandomInRange(-161.75583, -68.01197, 7)},
-      event: 'FIRE + EMT',
-      text: '(SAINT LOUIS - ) DELAYED: SLMPD ON SCENE OF A PEDESTRIAN STRUCK BY A VEHICLE, DECEASED. DRIVER FLED. [MOU016]',
+      event: event.event,
+      text: event.text,
       streamUrl: 'https://www.broadcastify.com/listen/feed/17925/web'
     })
 

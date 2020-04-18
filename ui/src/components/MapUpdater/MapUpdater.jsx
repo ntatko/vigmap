@@ -4,6 +4,8 @@ import { connectToMap } from '@bayer/ol-kit'
 
 class MapUpdater extends Component {
 
+  // reference to the map: `const { map } = this.props;` will pull the map in for use
+
   constructor() {
     super()
 
