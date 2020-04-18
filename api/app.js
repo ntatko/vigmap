@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
   console.log('a user connected');
   setInterval(() => {
     socket.broadcast.emit('sent coordinates', {
-      coords: { lat: getRandomInRange(-90, 90, 7), long: getRandomInRange(-180, 180, 7)},
+      coords: { lat: getRandomInRange(19.50139, 64.85694, 7), long: getRandomInRange(-161.75583, -68.01197, 7)},
       event: 'FIRE + EMT',
       text: '(SAINT LOUIS - ) DELAYED: SLMPD ON SCENE OF A PEDESTRIAN STRUCK BY A VEHICLE, DECEASED. DRIVER FLED. [MOU016]',
       streamUrl: 'https://www.broadcastify.com/listen/feed/17925/web'
