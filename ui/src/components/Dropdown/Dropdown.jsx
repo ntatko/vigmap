@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import DropDownButton from './DropdownButton'
-import { DisplayWindow, MenuItem, DropDownHeader, DropDownSelect, DropDownContainer } from './styled'
+import { DisplayWindow, DropDownHeader, DropDownSelect, DropDownContainer } from './styled'
 import { LoaderDots } from '@thumbtack/thumbprint-react'
 
 class Dropdown extends Component {
@@ -13,6 +13,7 @@ class Dropdown extends Component {
   }
 
   handleButtonClick = (event) => {
+    console.log("clicking button")
     event.stopPropagation()
     if (!this.state.showDropdown) {
       window.addEventListener('click', this.handleMenuClose)
@@ -24,12 +25,13 @@ class Dropdown extends Component {
   }
 
   handleMenuClose = () => {
+    console.log("closing menu")
     this.setState({ showDropdown: false })
     window.removeEventListener('click', this.handleMenuClose)
   }
 
   render() {
-    const { loading, values, disabled, value, handleValueChange, title } = this.props
+    const { loading, disabled, children, title } = this.props
     return(
       <DropDownContainer>
         <DropDownHeader>
@@ -39,20 +41,14 @@ class Dropdown extends Component {
           <DisplayWindow>
             { loading ? (
               <LoaderDots theme="inverse" size="small" />
-            ) : (
-              { value }
-            )}
+            ) : 
+              children.find((child) => child.selected)
+            }
           </DisplayWindow>
 
           <DropDownButton  />
         </DropDownSelect>
-        { this.state.showDropdown && values && (
-          <MenuItem>
-            { 'poop' }
-          </MenuItem>
-        )}
-        
-
+        { this.state.showDropdown && children }
       </DropDownContainer>
     )
   }

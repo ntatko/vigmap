@@ -14,7 +14,7 @@ export const MenuItem = styled.div`
 `
 
 export const DropDownHeader = styled.div`
-  margin: 0 5px 5px 5px;
+  margin: 0 0px 5px 0px;
   background-color: black;
   color: lightgreen;
 `

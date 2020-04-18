@@ -3,6 +3,7 @@ import { Map, Controls, zoomToExtent } from '@bayer/ol-kit'
 
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
+import MapUpdater from './components/MapUpdater/MapUpdater';
 
 // import VectorLayer from 'ol/layer/Vector'
 // import VectorSource from 'ol/source/Vector'
@@ -27,6 +28,7 @@ class App extends Component {
       <React.Fragment>
         <Map fullScreen style={{ zIndex: 1 }}>
           <Header />
+          <MapUpdater />
           <Controls />
           <Footer />
         </Map>
