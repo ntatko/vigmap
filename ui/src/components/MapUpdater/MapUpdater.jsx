@@ -13,6 +13,8 @@ import Fill from 'ol/style/fill'
 // import Icon from 'ol/style/icon'
 import VectorLayer from 'ol/layer/vector'
 import VectorSource from 'ol/source/vector'
+import easing from 'ol/easing'
+
 
 
 class MapUpdater extends Component {
@@ -71,6 +73,7 @@ class MapUpdater extends Component {
     const { map, geolocate } = this.props
     const myLayer = map.getLayers().getArray().find((layer) => layer.get('id') === 'ME')
     if (!geolocate && myLayer) {
+      // myLayer.on('postrender', animate)
       map.removeLayer(myLayer)
       this.geolocation(false)
       this.geolocation.un('change', this.updateUserLocation.bind(this))
@@ -103,6 +106,11 @@ class MapUpdater extends Component {
 
       map.addLayer(newMyLayer)
 
+      newMyLayer.getSource().on('addfeature', (e) => {
+        console.log("does this listener get added?")
+        this.flash(e.feature);
+      });
+
       this.geolocation.on('change:position', this.updateUserLocation.bind(this))
 
       const iconFeature = new Feature({
@@ -128,6 +136,47 @@ class MapUpdater extends Component {
       console.log("do we have a feature?", myFeature)
       const coordinates = this.geolocation.getPosition()
       myFeature.setGeometry(coordinates ? new Point(coordinates) : null)
+    }
+  }
+
+  flash(feature) {
+    console.log("flash is being fun")
+    const { map } = this.props
+    const duration = 3000
+    let start = new Date().getTime()
+    map.getLayers().getArray().find((layer) => layer.get('id') === 'ME').on('render', animate)
+    map.render();
+
+  
+    function animate(event) {
+      const vectorContext = event.vectorContext
+      const frameState = event.frameState
+      const flashGeom = feature.getGeometry().clone()
+      const elapsed = (frameState.time - start) % duration
+      const elapsedRatio = elapsed / duration
+      // radius will be 5 at start and 30 at end.
+      const radius = easing.easeOut(elapsedRatio) * 50 + 5
+      const opacity = easing.easeOut(1 - elapsedRatio)
+  
+      const style = new Style({
+        image: new Circle({
+          radius: radius,
+          stroke: new Stroke({
+            color: 'rgba(0, 0, 0, ' + opacity + ')',
+            width: 0.25 + opacity
+          })
+        })
+      });
+  
+      vectorContext.setStyle(style)
+      vectorContext.drawGeometry(flashGeom)
+      if (elapsed > duration) {
+        start = new Date().getTime()
+        // unByKey(listenerKey)
+        return
+      }
+      // tell OpenLayers to continue postrender animation
+      map.render();
     }
   }
 
