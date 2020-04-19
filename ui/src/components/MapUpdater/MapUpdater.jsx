@@ -8,7 +8,9 @@ import Feature from 'ol/feature'
 import Point from 'ol/geom/point'
 import Style from 'ol/style/style'
 import Stroke from 'ol/style/stroke'
-import Icon from 'ol/style/icon'
+import Circle from 'ol/style/circle'
+import Fill from 'ol/style/fill'
+// import Icon from 'ol/style/icon'
 import VectorLayer from 'ol/layer/vector'
 import VectorSource from 'ol/source/vector'
 
@@ -76,9 +78,20 @@ class MapUpdater extends Component {
       this.geolocation.setTracking(true)
       const iconStyle = new Style({
         stroke: new Stroke({
-        width: 6, color: [255, 0, 0, 1]
+          color: 'cyan',
+          width: 3
+        }),
+        image: new Circle({
+          radius: 5,
+          fill: new Fill({
+            color: 'white'
+          }),
+          stroke: new Stroke({
+            color: 'cyan',
+            width: 2
+          })
         })
-});
+      });
 
       const newMyLayer = new VectorLayer({
         source: new VectorSource(),
