@@ -28,7 +28,7 @@ class App extends Component {
       <React.Fragment>
         <Map fullScreen style={{ zIndex: 1 }}>
           <Header />
-          <MapUpdater />
+          <MapUpdater geolocate={true} />
           <Controls />
           <Footer />
         </Map>

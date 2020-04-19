@@ -1,26 +1,55 @@
 import { Component } from 'react'
 import io from 'socket.io-client'
 import { connectToMap } from '@bayer/ol-kit'
-import proj from 'ol/proj';
-import extent from 'ol/extent';
+import Geolocation from 'ol/geolocation'
+import proj from 'ol/proj'
+import extent from 'ol/extent'
+import Feature from 'ol/feature'
+import Point from 'ol/geom/point'
+import Style from 'ol/style/style'
+import Stroke from 'ol/style/stroke'
+import Icon from 'ol/style/icon'
+import VectorLayer from 'ol/layer/vector'
+import VectorSource from 'ol/source/vector'
 
 
 class MapUpdater extends Component {
 
   // reference to the map: `const { map } = this.props;` will pull the map in for use
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
 
     this.state = {
       points: [],
-      accidentExtent: null
+      accidentExtent: null,
+      location: null
     }
+
+    this.geolocation = new Geolocation({
+      trackingOptions: {
+        enableHighAccuracy: true
+      },
+      projection: props.map.getView().getProjection()
+    })
   }
 
   componentDidMount() {
     this.streamFeed()
     this.props.map.on('moveend', this.accidents.bind(this))
+    this.addUserLocation()
+  }
+
+  componentDidUpdate({geolocate: prevGeoLocate}) {
+    const { geolocate } = this.props
+    if (geolocate && !prevGeoLocate) {
+      console.log("pos1")
+      this.addUserLocation()
+    } else if (!geolocate && prevGeoLocate) {
+      console.log("pos2")
+
+      this.addUserLocation()
+    }
   }
 
   addNewPoint(emittedEvent) {
@@ -35,13 +64,64 @@ class MapUpdater extends Component {
     });
   }
 
+  addUserLocation() {
+    console.log("running add user location")
+    const { map, geolocate } = this.props
+    const myLayer = map.getLayers().getArray().find((layer) => layer.get('id') === 'ME')
+    if (!geolocate && myLayer) {
+      map.removeLayer(myLayer)
+      this.geolocation(false)
+      this.geolocation.un('change', this.updateUserLocation.bind(this))
+    } else if (geolocate && !myLayer) {
+      this.geolocation.setTracking(true)
+      const iconStyle = new Style({
+        stroke: new Stroke({
+        width: 6, color: [255, 0, 0, 1]
+        })
+});
+
+      const newMyLayer = new VectorLayer({
+        source: new VectorSource(),
+        style: iconStyle,
+      })
+
+      newMyLayer.set('id', 'ME')
+      newMyLayer.set('title', 'My Location')
+
+      map.addLayer(newMyLayer)
+
+      this.geolocation.on('change:position', this.updateUserLocation.bind(this))
+
+      const iconFeature = new Feature({
+        geometry: null,
+        name: 'My Location',
+        population: 4000,
+        rainfall: 500
+      })
+      iconFeature.set('id', 'currentLocation')
+      iconFeature.set('title', 'My Place in the World')
+      iconFeature.setStyle(iconStyle)
+
+      newMyLayer.getSource().addFeature(iconFeature)
+    }
+  }
+
+  updateUserLocation() {
+    console.log("running updateUserLocation")
+    const { map } = this.props
+    const myLayer = map.getLayers().getArray().find((layer) => layer.get('id') === 'ME')
+    const myFeature = myLayer && myLayer.getSource().getFeatures().find((feature) => feature.get('id') === 'currentLocation')
+    if (myFeature) {
+      console.log("do we have a feature?", myFeature)
+      const coordinates = this.geolocation.getPosition()
+      myFeature.setGeometry(coordinates ? new Point(coordinates) : null)
+    }
+  }
+
   async accidents() {
     const { map } = this.props;
-    console.log("original bounds", map.getView().calculateExtent(map.getSize()))
     const bounds = proj.transformExtent(map.getView().calculateExtent(map.getSize()), 'EPSG:3857', 'EPSG:4326')
-    console.log("bounds", bounds)
     while (-180 > bounds[0] || bounds[0] > 180) {
-      console.log("infinite loop?")
       if (bounds[0] < -180) {
         bounds[0] = bounds[0] + 360;
         bounds[2] = bounds[2] + 360;
@@ -51,15 +131,13 @@ class MapUpdater extends Component {
       }
     }
     const transformedBounds = [bounds[1], bounds[0], bounds[3], bounds[2]]
-    console.log("bounds", transformedBounds)
     if (this.state.accidentExtent && extent.containsExtent(this.state.accidentExtent, map.getView().calculateExtent(map.getSize()))) {
       // if a previous extent contains the current extent, do nothing
       return;
     }
-    if (bounds.length !== 4 || Math.abs(transformedBounds[0]-transformedBounds[2]) > 0.7 || Math.abs(transformedBounds[1]-transformedBounds[3]) > 0.7) {
-      console.log("too far away to request anything")
+    if (transformedBounds.length !== 4 || Math.abs(transformedBounds[0]-transformedBounds[2]) > 0.7 || Math.abs(transformedBounds[1]-transformedBounds[3]) > 0.7) {
       // if we have the wrong bounds, or the extent is too large, do nothing
-      // mapquest does not allow extends broader than .2 of lat or long
+      // mapquest does not allow extends broader than .7 of lat or long
       return;
     }
     //build mapquest query
@@ -71,14 +149,13 @@ class MapUpdater extends Component {
     this.setState({accidentExtent: map.getView().calculateExtent(map.getSize())})
 
     // get mapquest incidents
-    console.log("url", url)
     const response = await fetch(url)
     if (response.status !== 200) {
       throw Error(response.message);
     }
     const json = await response.json()
     json.incidents && json.incidents.forEach((incident) => {
-      this.addNewPoint({event: 'traffic incident', coords: { lat: incident.lat, long: incident.lng }, text: incident.fullDesc})
+      this.addNewPoint({source: 'mapquest', event: 'traffic incident', time: Date(incident.startTime), coords: { lat: incident.lat, long: incident.lng }, text: incident.fullDesc})
     })
   }
 
