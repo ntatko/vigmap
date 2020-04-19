@@ -1,6 +1,6 @@
-import { Component } from 'react'
+import React, { Component } from 'react'
 import io from 'socket.io-client'
-import { connectToMap } from '@bayer/ol-kit'
+import { connectToMap, LayerPanel, LayerPanelPage, LayerPanelHeader, LayerPanelContent } from '@bayer/ol-kit'
 import Geolocation from 'ol/geolocation'
 import proj from 'ol/proj'
 import extent from 'ol/extent'
@@ -10,12 +10,14 @@ import Style from 'ol/style/style'
 import Stroke from 'ol/style/stroke'
 import Circle from 'ol/style/circle'
 import Fill from 'ol/style/fill'
-// import Icon from 'ol/style/icon'
+import Icon from 'ol/style/icon'
 import VectorLayer from 'ol/layer/vector'
 import VectorSource from 'ol/source/vector'
 import easing from 'ol/easing'
+import RssFeed from '@material-ui/icons/RssFeed'
+import { Checkbox } from '@thumbtack/thumbprint-react'
 
-
+const emojis = [{name: "POLICE", symbol: "🚓"}, {name: "FIRE + EMT", symbol: "🚒➕🚑"}, {name: "ACCIDENT", symbol: "🚧"}]
 
 class MapUpdater extends Component {
 
@@ -27,7 +29,8 @@ class MapUpdater extends Component {
     this.state = {
       points: [],
       accidentExtent: null,
-      location: null
+      location: null,
+      showEventTypes: []
     }
 
     this.geolocation = new Geolocation({
@@ -80,10 +83,7 @@ class MapUpdater extends Component {
     } else if (geolocate && !myLayer) {
       this.geolocation.setTracking(true)
       const iconStyle = new Style({
-        stroke: new Stroke({
-          color: 'cyan',
-          width: 3
-        }),
+        stroke: new Stroke(),
         image: new Circle({
           radius: 5,
           fill: new Fill({
@@ -93,6 +93,10 @@ class MapUpdater extends Component {
             color: 'cyan',
             width: 2
           })
+          // anchor: [0.5, 46],
+          // anchorXUnits: 'fraction',
+          // anchorYUnits: 'pixels',
+          // src: '../../images/cape.png'
         })
       });
 
@@ -222,7 +226,32 @@ class MapUpdater extends Component {
   }
 
   render() {
-    return null;
+    return <LayerPanel style={{ color: 'black' }}>
+      <LayerPanelPage tabIcon={<RssFeed />}>
+        <LayerPanelHeader
+          customActions={
+            <div>
+              {this.state.points.reduce((acc, point) => acc.includes(point.event) ? acc : acc.concat(point.event), []).map((eventType) => (
+                <Checkbox
+                  isChecked={this.state.showEventTypes.includes(eventType)}
+                  onChange={() => this.setState((state) => state.showEventTypes.includes[eventType] ? ({showEventTypes: state.showEventTypes.concat(eventType)}) : ({showEventTypes: state.showEventTypes.filter((type) => type !== eventType)}))}
+                >
+                  { eventType }
+                </Checkbox>
+              ))}
+            </div>
+          }
+          title={'Emergency Event Feed'}
+        />
+        <LayerPanelContent>
+          {this.state.points.reverse().map((point) => (
+            <div key={point.text} >
+              { `${emojis.find((emoji) => emoji.name===point.event).symbol}` }
+            </div>
+          ))}
+        </LayerPanelContent>
+      </LayerPanelPage>
+    </LayerPanel>
   }
 }
 

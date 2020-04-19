@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Map, Controls, zoomToExtent } from '@bayer/ol-kit'
+import { Map, Controls, LayerPanel } from '@bayer/ol-kit'
 
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
@@ -20,13 +20,13 @@ class App extends Component {
     // map.addLayer(data)
 
     // quickly take the map
-    zoomToExtent([0, 0], 12)
+    window.map = map
   }
 
   render () {
     return (
       <React.Fragment>
-        <Map fullScreen style={{ zIndex: 1 }}>
+        <Map onMapInit={this.onMapInit} fullScreen>
           <Header />
           <MapUpdater geolocate={true} />
           <Controls />
