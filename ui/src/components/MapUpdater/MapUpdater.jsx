@@ -10,14 +10,13 @@ import Style from 'ol/style/style'
 import Stroke from 'ol/style/stroke'
 import Circle from 'ol/style/circle'
 import Fill from 'ol/style/fill'
-import Icon from 'ol/style/icon'
 import VectorLayer from 'ol/layer/vector'
 import VectorSource from 'ol/source/vector'
 import easing from 'ol/easing'
 import RssFeed from '@material-ui/icons/RssFeed'
 import { Checkbox } from '@thumbtack/thumbprint-react'
 
-const emojis = [{name: "POLICE", symbol: "🚓"}, {name: "FIRE + EMT", symbol: "🚒➕🚑"}, {name: "ACCIDENT", symbol: "🚧"}]
+const emojis = [{name: "POLICE", symbol: "🚓"}, {name: "FIRE + EMT", symbol: "🚒➕🚑"}, {name: 'TRAFFIC INCIDENT', symbol: "🚧"}]
 
 class MapUpdater extends Component {
 
@@ -50,10 +49,8 @@ class MapUpdater extends Component {
   componentDidUpdate({geolocate: prevGeoLocate}) {
     const { geolocate } = this.props
     if (geolocate && !prevGeoLocate) {
-      console.log("pos1")
       this.addUserLocation()
     } else if (!geolocate && prevGeoLocate) {
-      console.log("pos2")
 
       this.addUserLocation()
     }
@@ -67,18 +64,17 @@ class MapUpdater extends Component {
     const manager = io('localhost:8081')
     manager.on('sent coordinates', (data) => {
       //console.log("we're seeing data", data);
-      this.addNewPoint({source: 'stream', time: Date.now(), ...data})
+      this.addNewPoint({source: 'stream', time: new Date().getTime(), ...data})
     });
   }
 
   addUserLocation() {
-    console.log("running add user location")
     const { map, geolocate } = this.props
     const myLayer = map.getLayers().getArray().find((layer) => layer.get('id') === 'ME')
     if (!geolocate && myLayer) {
       // myLayer.on('postrender', animate)
       map.removeLayer(myLayer)
-      this.geolocation(false)
+      this.geolocation.setTracking(false)
       this.geolocation.un('change', this.updateUserLocation.bind(this))
     } else if (geolocate && !myLayer) {
       this.geolocation.setTracking(true)
@@ -111,7 +107,6 @@ class MapUpdater extends Component {
       map.addLayer(newMyLayer)
 
       newMyLayer.getSource().on('addfeature', (e) => {
-        console.log("does this listener get added?")
         this.flash(e.feature);
       });
 
@@ -132,19 +127,17 @@ class MapUpdater extends Component {
   }
 
   updateUserLocation() {
-    console.log("running updateUserLocation")
-    const { map } = this.props
+    const { map, setCurrentLocation } = this.props
     const myLayer = map.getLayers().getArray().find((layer) => layer.get('id') === 'ME')
     const myFeature = myLayer && myLayer.getSource().getFeatures().find((feature) => feature.get('id') === 'currentLocation')
     if (myFeature) {
-      console.log("do we have a feature?", myFeature)
       const coordinates = this.geolocation.getPosition()
+      setCurrentLocation(coordinates)
       myFeature.setGeometry(coordinates ? new Point(coordinates) : null)
     }
   }
 
   flash(feature) {
-    console.log("flash is being fun")
     const { map } = this.props
     const duration = 3000
     let start = new Date().getTime()
@@ -221,7 +214,9 @@ class MapUpdater extends Component {
     }
     const json = await response.json()
     json.incidents && json.incidents.forEach((incident) => {
-      this.addNewPoint({source: 'mapquest', event: 'traffic incident', time: Date(incident.startTime), coords: { lat: incident.lat, long: incident.lng }, text: incident.fullDesc})
+      if (!this.state.points.find((point) => point.coords.lat === incident.lat && point.coords.long === incident.lng)) {
+        this.addNewPoint({source: 'mapquest', event: 'TRAFFIC INCIDENT', time: Date(incident.startTime), coords: { lat: incident.lat, long: incident.lng }, text: incident.fullDesc})
+      }
     })
   }
 
@@ -246,7 +241,14 @@ class MapUpdater extends Component {
         <LayerPanelContent>
           {this.state.points.reverse().map((point) => (
             <div key={point.text} >
-              { `${emojis.find((emoji) => emoji.name===point.event).symbol}` }
+              <div>
+                { `${emojis.find((emoji) => emoji.name===point.event).symbol}` }
+              </div>
+              { point.time && (
+                <div>
+                  { `${(point.time - Date())/1000 < 60 ? (point.time - Date())/1000 + 's' : (point.time - Date())/60000 + 'min' } ago` }
+                </div>
+              )}
             </div>
           ))}
         </LayerPanelContent>
