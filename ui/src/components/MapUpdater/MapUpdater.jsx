@@ -16,6 +16,11 @@ import easing from 'ol/easing'
 import RssFeed from '@material-ui/icons/RssFeed'
 import { Checkbox } from '@thumbtack/thumbprint-react'
 import { Card, Time, Message, Icon} from './styled'
+import distance from '@turf/distance'
+import { point } from '@turf/helpers'
+import olIcon from 'ol/style/icon'
+
+import BATMAN from '../../images/batman.js'
 
 const fireOlStyle = new Style({
   stroke: new Stroke({
@@ -115,6 +120,15 @@ class MapUpdater extends Component {
   addNewPoint(emittedEvent) {
     this.addNewPointToMap(emittedEvent)
     this.setState((state) => ({points: state.points.concat(emittedEvent)}));
+
+    if (this.props.geolocate && this.geolocation && this.geolocation.getPosition()) {
+      const from = new point(proj.transform(this.geolocation.getPosition(), this.geolocation.getProjection(), 'EPSG:4326'))
+      const to = new point([emittedEvent.coords.long, emittedEvent.coords.lat])
+
+      if (distance(from, to, {units: 'miles'}) < this.props.alertDistance) {
+        this.props.showSnackbar(emittedEvent)
+      }
+    }
   }
 
   addNewPointToMap(emittedEvent) {
@@ -157,21 +171,22 @@ class MapUpdater extends Component {
       this.geolocation.un('change', this.updateUserLocation.bind(this))
     } else if (geolocate && !myLayer) {
       this.geolocation.setTracking(true)
+      console.log('batman', BATMAN);
       const iconStyle = new Style({
         stroke: new Stroke(),
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({
-            color: 'white'
-          }),
-          stroke: new Stroke({
-            color: 'cyan',
-            width: 2
-          })
-          // anchor: [0.5, 46],
-          // anchorXUnits: 'fraction',
-          // anchorYUnits: 'pixels',
-          // src: '../../images/cape.png'
+        // image: new Circle({
+           image: new olIcon({
+          // radius: 5,
+          // fill: new Fill({
+          //   color: 'white'
+          // }),
+          // stroke: new Stroke({
+          //   color: 'cyan',
+          //   width: 2
+          // })
+          opacity: 1,
+          src: 'data:image/svg+xml;utf8,' + BATMAN,
+          scale: 5
         })
       });
 
@@ -230,7 +245,7 @@ class MapUpdater extends Component {
       const elapsed = (frameState.time - start) % duration
       const elapsedRatio = elapsed / duration
       // radius will be 5 at start and 30 at end.
-      const radius = easing.easeOut(elapsedRatio) * 50 + 5
+      const radius = easing.easeOut(elapsedRatio) * 100 + 5
       const opacity = easing.easeOut(1 - elapsedRatio)
   
       const style = new Style({

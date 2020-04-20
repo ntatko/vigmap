@@ -11,14 +11,18 @@ class Footer extends Component {
       'TRAFFIC INCIDENT': 'warning'
     }
     return (
-      <div>
-        { this.props.messages.map((message) => (
-          <Snackbar id={message.text + new Date().getTime()} autoHideDuration={6000} onClose={() => this.props.removeMessage(message)}>
-            <MuiAlert variant={'filled'} severity={severities[message.type]}>
-              {message.text}
-            </MuiAlert>
-          </Snackbar>
-        ))}
+      <div style={{ position: 'fixed', bottom: 0, left: 0}}>
+        { this.props.messages.map((message) => {
+          return (
+            <Snackbar id={message.text + new Date().getTime()} autoHideDuration={6000} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} onClose={() => this.props.removeMessage(message)}>
+              <MuiAlert variant={'filled'} severity={severities[message.type]}>
+                {message.text}
+              </MuiAlert>
+            </Snackbar>
+          )
+        }
+          
+        )}
       </div>
     )
   }

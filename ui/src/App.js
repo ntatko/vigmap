@@ -17,7 +17,7 @@ class App extends Component {
       geolocate: true,
       currentLocation: null,
       messages: [],
-      alertDistance: 0,
+      alertDistance: 25,
     }
   }
   onMapInit = map => {
@@ -34,9 +34,12 @@ class App extends Component {
     window.map = map
   }
 
-  toggleGeolocation = () => this.setState((state) => ({ geolocate: !state.geolocate, currentLocation: null, alertDistance: 25 }))
+  toggleGeolocation = () => this.setState((state) => ({ geolocate: !state.geolocate, currentLocation: null }))
   setCurrentLocation = (loc) => this.setState({ currentLocation: loc })
-  showSnackbar = (message) => this.setState((state) => ({ messages: state.messages.concat(message) }))
+  showSnackbar = (message) => {
+    console.log("doing this thing")
+    this.setState((state) => ({ messages: state.messages.concat(message) }))
+  }
   handleSnackbarClose = (message) => this.setState((state) => ({ messages: state.messages.filter((_, index) => !state.messages.findIndex((m) => m.text === message.text) === index)}))
   setAlertDistance = (distance) => this.setState({alertDistance: distance})
 
@@ -46,7 +49,7 @@ class App extends Component {
         <Map onMapInit={this.onMapInit} fullScreen>
           <Popup />
           <Header geolocate={this.state.geolocate} toggleGeolocation={this.toggleGeolocation} alertDistance={this.state.alertDistance} setAlertDistance={this.setAlertDistance} />
-          <MapUpdater geolocate={this.state.geolocate} setCurrentLocation={this.setCurrentLocation} />
+          <MapUpdater geolocate={this.state.geolocate} setCurrentLocation={this.setCurrentLocation} alertDistance={this.state.alertDistance} showSnackbar={this.showSnackbar} />
           <Controller toggleGeolocation={this.toggleGeolocation} geolocate={this.state.geolocate} currentLocation={this.state.currentLocation} />
           <Footer messages={this.state.messages} removeMessage={this.handleSnackbarClose} />
         </Map>
