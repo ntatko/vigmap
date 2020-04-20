@@ -15,8 +15,9 @@ import VectorSource from 'ol/source/vector'
 import easing from 'ol/easing'
 import RssFeed from '@material-ui/icons/RssFeed'
 import { Checkbox } from '@thumbtack/thumbprint-react'
+import { Card, Time, Message, Icon} from './styled'
 
-const emojis = [{name: "POLICE", symbol: "🚓"}, {name: "FIRE + EMT", symbol: "🚒➕🚑"}, {name: 'TRAFFIC INCIDENT', symbol: "🚧"}]
+const emojis = [{name: "POLICE", symbol: "🚓", color: 'rgba(19, 89, 241, 0.64)'}, {name: "FIRE + EMT", symbol: "🚒➕🚑", color: 'rgba(241, 19, 19, 0.64)'}, {name: 'TRAFFIC INCIDENT', symbol: "🚧", color: 'rgba(241, 238, 19, 0.7)'}]
 
 class MapUpdater extends Component {
 
@@ -24,8 +25,6 @@ class MapUpdater extends Component {
 
   constructor(props) {
     super(props)
-
-    console.log('porps', props)
 
     this.state = {
       points: [],
@@ -242,19 +241,22 @@ class MapUpdater extends Component {
           title={'Emergency Event Feed'}
         />
         {/** silly, this expects imports and exports to be on every layer panel page with a header */}
-        <LayerPanelContent>
+        <LayerPanelContent style={{ maxHeight: 500 }}>
           { /** bug, this always renders even with the layer panel is closed */}
-          {this.state.points.reverse().map((point) => (
-            <div key={point.text} >
-              <div>
+          {this.state.points.slice().reverse().map((point) => (
+            <Card key={point.text + new Date().getTime()} color={emojis.find((emoji) => emoji.name===point.event).color}>
+              <Icon>
                 { `${emojis.find((emoji) => emoji.name===point.event).symbol}` }
-              </div>
+              </Icon>
+              <Message>
+                { point.text }
+              </Message>
               { point.time && (
-                  <div>
-                    { `${(new Date().getTime()-point.time)/1000 < 60 ? (Math.round(new Date().getTime() - point.time)/1000) + ' s' : (Math.round(new Date().getTime() - point.time)/60000) + ' min' } ago` }
-                  </div>
-                )}
-            </div>
+                <Time>
+                  { `${(new Date().getTime()-point.time)/1000 < 60 ? Math.round((new Date().getTime() - point.time)/1000) + ' s' : Math.round((new Date().getTime() - point.time)/60000) + ' min' } ago` }
+                </Time>
+              )}
+            </Card>
           ))}
         </LayerPanelContent>
       </LayerPanelPage>

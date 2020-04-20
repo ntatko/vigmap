@@ -7,6 +7,7 @@ export const DisplayWindow = styled.div`
   height: 40px;
   display: flex;
   align-items: center;
+  min-width: 110px;
 `
 
 export const MenuItem = styled.div`
@@ -28,4 +29,11 @@ export const DropDownContainer = styled.div`
 export const DropDownSelect = styled.div`
   display: flex;
   background-color: transparent;
+`
+export const DropdownDrawer = styled.div`
+  background-color: #0C0F12;
+  padding: 4px;
+  margin-top: 5px;
+  color: lightgray;
+  border-radius: 3px;
 `

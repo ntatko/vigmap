@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import DropDownButton from './DropdownButton'
-import { DisplayWindow, DropDownHeader, DropDownSelect, DropDownContainer } from './styled'
+import { DisplayWindow, DropDownHeader, DropDownSelect, DropDownContainer, DropdownDrawer } from './styled'
 import { LoaderDots } from '@thumbtack/thumbprint-react'
 
 class Dropdown extends Component {
@@ -12,22 +12,16 @@ class Dropdown extends Component {
     }
   }
 
-  handleButtonClick = (event) => {
-    console.log("clicking button")
-    event.stopPropagation()
+  handleButtonClick = () => {
     if (!this.state.showDropdown) {
-      window.addEventListener('click', this.handleMenuClose)
       this.setState((state) => ({ showDropdown: !state.showDropdown }))
     } else {
       this.handleMenuClose()
     }
-
   }
 
   handleMenuClose = () => {
-    console.log("closing menu")
     this.setState({ showDropdown: false })
-    window.removeEventListener('click', this.handleMenuClose)
   }
 
   render() {
@@ -50,7 +44,11 @@ class Dropdown extends Component {
 
           <DropDownButton  />
         </DropDownSelect>
-        { this.state.showDropdown && children }
+        { this.state.showDropdown && (
+          <DropdownDrawer>
+            { children }
+          </DropdownDrawer>
+        )}
       </DropDownContainer>
     )
   }

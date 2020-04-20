@@ -5,7 +5,8 @@ export const HeaderWrapper = styled.div`
   display: flex;
   top: 0;
   left: 0;
-  z-index: 10
+  z-index: 10;
+  align-items: flex-start; 
 `
 export const TitleText = styled.div`
   padding: 20px;

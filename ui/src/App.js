@@ -15,7 +15,9 @@ class App extends Component {
 
     this.state = {
       geolocate: false,
-      currentLocation: null
+      currentLocation: null,
+      messages: [],
+      alertDistance: 0,
     }
   }
   onMapInit = map => {
@@ -32,18 +34,21 @@ class App extends Component {
     window.map = map
   }
 
-  toggleGeolocation = () => this.setState((state) => ({geolocate: !state.geolocate}))
-  setCurrentLocation = (loc) => this.setState({currentLocation: loc})
+  toggleGeolocation = () => this.setState((state) => ({ geolocate: !state.geolocate, currentLocation: null, alertDistance: 25 }))
+  setCurrentLocation = (loc) => this.setState({ currentLocation: loc })
+  showSnackbar = (message) => this.setState((state) => ({ messages: state.messages.concat(message) }))
+  handleSnackbarClose = (message) => this.setState((state) => ({ messages: state.messages.filter((_, index) => !state.messages.findIndex((m) => m.text === message.text) === index)}))
+  setAlertDistance = (distance) => this.setState({alertDistance: distance})
 
   render () {
     return (
       <React.Fragment>
         <Map onMapInit={this.onMapInit} fullScreen>
           <Popup />
-          <Header />
+          <Header geolocate={this.state.geolocate} toggleGeolocation={this.toggleGeolocation} alertDistance={this.state.alertDistance} setAlertDistance={this.setAlertDistance} />
           <MapUpdater geolocate={this.state.geolocate} setCurrentLocation={this.setCurrentLocation} />
           <Controller toggleGeolocation={this.toggleGeolocation} geolocate={this.state.geolocate} currentLocation={this.state.currentLocation} />
-          <Footer />
+          <Footer messages={this.state.messages} removeMessage={this.handleSnackbarClose} />
         </Map>
       </React.Fragment>
     )

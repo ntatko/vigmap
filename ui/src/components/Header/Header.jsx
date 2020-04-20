@@ -4,6 +4,8 @@ import Dropdown from '../Dropdown/Dropdown'
 import Logo from '../../images/logo.jsx'
 
 import { BingMaps, BlankWhite, StamenTonerDark, Map } from '@bayer/ol-kit'
+import { Checkbox, TextInput } from '@thumbtack/thumbprint-react'
+import Slider from '@material-ui/core/Slider'
 
 class Header extends Component {
   
@@ -29,7 +31,33 @@ class Header extends Component {
             </div>
           ))}
         </Dropdown>
-        <Dropdown title={'Alert Distance'} loading disabled />
+        <Dropdown title={'Alert Distance'} selected={
+          <div style={{ color: 'lightgreen'}}>
+            {`${ this.props.alertDistance } mileses`}
+          </div>
+        } >
+          <div>
+            { !this.props.geolocate ? (
+              <Checkbox isChecked={false} onChange={this.props.toggleGeolocation}>
+                {'Enable Geolocation'}
+              </Checkbox>
+            ) : (
+              <div>
+                <Slider value={this.props.alertDistance} onChange={(_, e) => this.props.setAlertDistance(e)} />
+                <div style={{ maxWidth: '150px'}}>
+                  <TextInput
+                    size="small"
+                    id="example-1"
+                    value={this.props.alertDistance}
+                    innerRight={<span style={{ color: 'gray', alignSelf: 'center'}}>{'mi'}</span>}
+                    onChange={this.props.setAlertDistance}
+                    maxLength={3}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </Dropdown>
       </HeaderWrapper>  
     )
   }
