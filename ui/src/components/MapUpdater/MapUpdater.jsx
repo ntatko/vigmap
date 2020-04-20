@@ -171,19 +171,9 @@ class MapUpdater extends Component {
       this.geolocation.un('change', this.updateUserLocation.bind(this))
     } else if (geolocate && !myLayer) {
       this.geolocation.setTracking(true)
-      console.log('batman', BATMAN);
       const iconStyle = new Style({
         stroke: new Stroke(),
-        // image: new Circle({
            image: new olIcon({
-          // radius: 5,
-          // fill: new Fill({
-          //   color: 'white'
-          // }),
-          // stroke: new Stroke({
-          //   color: 'cyan',
-          //   width: 2
-          // })
           opacity: 1,
           src: 'data:image/svg+xml;utf8,' + BATMAN,
           scale: 5
