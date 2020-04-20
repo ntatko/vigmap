@@ -25,6 +25,8 @@ class MapUpdater extends Component {
   constructor(props) {
     super(props)
 
+    console.log('porps', props)
+
     this.state = {
       points: [],
       accidentExtent: null,
@@ -215,7 +217,8 @@ class MapUpdater extends Component {
     const json = await response.json()
     json.incidents && json.incidents.forEach((incident) => {
       if (!this.state.points.find((point) => point.coords.lat === incident.lat && point.coords.long === incident.lng)) {
-        this.addNewPoint({source: 'mapquest', event: 'TRAFFIC INCIDENT', time: Date(incident.startTime), coords: { lat: incident.lat, long: incident.lng }, text: incident.fullDesc})
+        console.log("date?", new Date(incident.startTime).getTime())
+        this.addNewPoint({source: 'mapquest', event: 'TRAFFIC INCIDENT', time: new Date(incident.startTime).getTime(), coords: { lat: incident.lat, long: incident.lng }, text: incident.fullDesc})
       }
     })
   }
@@ -238,17 +241,19 @@ class MapUpdater extends Component {
           }
           title={'Emergency Event Feed'}
         />
+        {/** silly, this expects imports and exports to be on every layer panel page with a header */}
         <LayerPanelContent>
+          { /** bug, this always renders even with the layer panel is closed */}
           {this.state.points.reverse().map((point) => (
             <div key={point.text} >
               <div>
                 { `${emojis.find((emoji) => emoji.name===point.event).symbol}` }
               </div>
               { point.time && (
-                <div>
-                  { `${(point.time - Date())/1000 < 60 ? (point.time - Date())/1000 + 's' : (point.time - Date())/60000 + 'min' } ago` }
-                </div>
-              )}
+                  <div>
+                    { `${(new Date().getTime()-point.time)/1000 < 60 ? (Math.round(new Date().getTime() - point.time)/1000) + ' s' : (Math.round(point.time - Date())/60000) + ' min' } ago` }
+                  </div>
+                )}
             </div>
           ))}
         </LayerPanelContent>

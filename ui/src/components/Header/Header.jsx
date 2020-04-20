@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { HeaderWrapper, TitleText } from './styled'
+import { HeaderWrapper } from './styled'
 import Dropdown from '../Dropdown/Dropdown'
+import Logo from '../../images/logo.jsx'
 
-import { BingMaps, BlankWhite, StamenTonerDark } from '@bayer/ol-kit'
+import { BingMaps, BlankWhite, StamenTonerDark, Map } from '@bayer/ol-kit'
 
 class Header extends Component {
   
@@ -15,12 +16,12 @@ class Header extends Component {
 
     return (
       <HeaderWrapper>
-        <TitleText className={'cut'}>
-          {'VigilanteMap'}
-        </TitleText>
+        <div style={{ marginRight: 5, marginTop: -3 }}>
+          <Logo />
+        </div>
         <Dropdown title={'Basemap?'}>
           { basemaps.map((basemap) => (
-            <div style={{ display: 'block', width: 100, height:40, padding: 5, borderBlockColor: 'black' }} key={ basemap.title } selected={basemap.title==='Bing Maps'}>
+            <div style={{ display: 'block', width: 200, height:60, padding: 5, borderBlockColor: 'black' }} key={ basemap.title } selected={basemap.title==='Bing Maps'}>
               <div style={{ position: 'absolute', top: 0, left: 0 }}>
                 { basemap.title }
               </div>
@@ -28,6 +29,7 @@ class Header extends Component {
             </div>
           ))}
         </Dropdown>
+        <Dropdown title={'Alert Distance'} loading disabled />
       </HeaderWrapper>  
     )
   }

@@ -12,7 +12,6 @@ class Controller extends Component {
     const { map, currentLocation } = this.props;
     
     const centerLongLat = proj.transform(currentLocation, map.getView().getProjection().getCode(), 'EPSG:4326') //silly, it's gonig to get transformed back immediately
-    console.log("centerLongLat", centerLongLat)
     centerAndZoom(map, {x: centerLongLat[0], y: centerLongLat[1], zoom: 13})
   }
 
@@ -27,7 +26,9 @@ class Controller extends Component {
                 <LocationSearchingIcon />
               </Icon>
             ) : (
-              <LoaderDots size="small" />
+              <Icon>
+                <LoaderDots size="small" />
+              </Icon>
             )}
             <IconDivider />
           </>

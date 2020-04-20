@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const DisplayWindow = styled.div`
-  padding: 5px 30px;
+  padding: 5px 5px;
   background: black;
   margin-right: 5px;
   height: 40px;
@@ -22,6 +22,7 @@ export const DropDownHeader = styled.div`
 export const DropDownContainer = styled.div`
   display: block;
   background-color: transparent;
+  margin-right: 5px
 `
 
 export const DropDownSelect = styled.div`

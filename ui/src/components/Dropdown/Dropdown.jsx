@@ -39,10 +39,12 @@ class Dropdown extends Component {
         </DropDownHeader>
         <DropDownSelect onClick={!disabled && this.handleButtonClick.bind(this)} >
           <DisplayWindow>
-            { loading ? (
-              <LoaderDots theme="inverse" size="small" />
+            { loading || !this.props.selected ? (
+              <div style={{ margin: '0 20px 0 20px'}}>
+                <LoaderDots theme="inverse" size="small" />
+              </div>
             ) : 
-              children.find((child) => child.selected)
+              this.props.selected
             }
           </DisplayWindow>
 

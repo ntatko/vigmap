@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Map } from '@bayer/ol-kit'
+import { Map, Popup } from '@bayer/ol-kit'
 
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
@@ -39,6 +39,7 @@ class App extends Component {
     return (
       <React.Fragment>
         <Map onMapInit={this.onMapInit} fullScreen>
+          <Popup />
           <Header />
           <MapUpdater geolocate={this.state.geolocate} setCurrentLocation={this.setCurrentLocation} />
           <Controller toggleGeolocation={this.toggleGeolocation} geolocate={this.state.geolocate} currentLocation={this.state.currentLocation} />
