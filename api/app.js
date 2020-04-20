@@ -66,7 +66,7 @@ module.exports = app;
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  setInterval(() => {
+  const id = setInterval(() => {
     const event = getEvent();
     socket.broadcast.emit('sent coordinates', {
       coords: { lat: getRandomInRange(19.50139, 64.85694, 7), long: getRandomInRange(-161.75583, -68.01197, 7)},
@@ -74,7 +74,10 @@ io.on('connection', (socket) => {
       text: event.text,
       streamUrl: 'https://www.broadcastify.com/listen/feed/17925/web'
     })
-
+    // if (socket.disconnected) {
+    //   console.log("a user disconnected")
+    //   clearInterval(id);
+    // }
   }, 3000)
 })
 

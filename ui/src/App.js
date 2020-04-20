@@ -14,7 +14,7 @@ class App extends Component {
     super()
 
     this.state = {
-      geolocate: false,
+      geolocate: true,
       currentLocation: null,
       messages: [],
       alertDistance: 0,

@@ -17,7 +17,62 @@ import RssFeed from '@material-ui/icons/RssFeed'
 import { Checkbox } from '@thumbtack/thumbprint-react'
 import { Card, Time, Message, Icon} from './styled'
 
-const emojis = [{name: "POLICE", symbol: "🚓", color: 'rgba(19, 89, 241, 0.64)'}, {name: "FIRE + EMT", symbol: "🚒➕🚑", color: 'rgba(241, 19, 19, 0.64)'}, {name: 'TRAFFIC INCIDENT', symbol: "🚧", color: 'rgba(241, 238, 19, 0.7)'}]
+const fireOlStyle = new Style({
+  stroke: new Stroke({
+    color: 'red',
+    width: 3
+  }),
+  image: new Circle({
+    radius: 5,
+    fill: new Fill({
+      color: 'white'
+    }),
+    stroke: new Stroke({
+      color: 'red',
+      width: 5
+    })
+  })
+});
+
+const policeOlStyle = new Style({
+  stroke: new Stroke({
+    color: 'blue',
+    width: 3
+  }),
+  image: new Circle({
+    radius: 5,
+    fill: new Fill({
+      color: 'white'
+    }),
+    stroke: new Stroke({
+      color: 'blue',
+      width: 5
+    })
+  })
+});
+
+const trafficOlStyle = new Style({
+  stroke: new Stroke({
+    color: 'orange',
+    width: 3
+  }),
+  image: new Circle({
+    radius: 5,
+    fill: new Fill({
+      color: 'white'
+    }),
+    stroke: new Stroke({
+      color: 'orange',
+      width: 5
+    })
+  })
+});
+
+const emojis = [
+  {name: "POLICE", symbol: "🚓", color: 'rgba(19, 89, 241, 0.64)', style: policeOlStyle},
+  {name: "FIRE + EMT", symbol: "🚒➕🚑", color: 'rgba(241, 19, 19, 0.64)', style: fireOlStyle},
+  {name: 'TRAFFIC INCIDENT', symbol: "🚧", color: 'rgba(241, 238, 19, 0.7)', style: trafficOlStyle}
+]
 
 class MapUpdater extends Component {
 
@@ -58,13 +113,36 @@ class MapUpdater extends Component {
   }
 
   addNewPoint(emittedEvent) {
+    this.addNewPointToMap(emittedEvent)
     this.setState((state) => ({points: state.points.concat(emittedEvent)}));
+  }
+
+  addNewPointToMap(emittedEvent) {
+    const { map } = this.props;
+    const newLayer = () => {
+      const thislayer = new VectorLayer({
+        source: new VectorSource(),
+        title: emittedEvent.event,
+        id: emittedEvent.event,
+        style: emojis.find((emoji) => emoji.name===emittedEvent.event).style
+      })
+      map.addLayer(thislayer)
+      return thislayer
+    }
+    const layer = map.getLayers().getArray().find((layer) => layer.get('id') === emittedEvent.event) || newLayer()
+    const feature = new Feature({
+      geometry: new Point(proj.transform([emittedEvent.coords.long, emittedEvent.coords.lat], 'EPSG:4326', map.getView().getProjection().getCode())),
+      title: emittedEvent.text,
+      name: emittedEvent.text
+    })
+
+    feature.setStyle(emojis.find((emoji) => emoji.name===emittedEvent.event).style)
+    layer.getSource().addFeature(feature)
   }
 
   streamFeed() {
     const manager = io('localhost:8081')
     manager.on('sent coordinates', (data) => {
-      //console.log("we're seeing data", data);
       this.addNewPoint({source: 'stream', time: new Date().getTime(), ...data})
     });
   }
@@ -116,8 +194,6 @@ class MapUpdater extends Component {
       const iconFeature = new Feature({
         geometry: null,
         name: 'My Location',
-        population: 4000,
-        rainfall: 500
       })
       iconFeature.set('id', 'currentLocation')
       iconFeature.set('title', 'My Place in the World')
@@ -128,6 +204,7 @@ class MapUpdater extends Component {
   }
 
   updateUserLocation() {
+    "updateUserLocation"
     const { map, setCurrentLocation } = this.props
     const myLayer = map.getLayers().getArray().find((layer) => layer.get('id') === 'ME')
     const myFeature = myLayer && myLayer.getSource().getFeatures().find((feature) => feature.get('id') === 'currentLocation')
@@ -203,7 +280,7 @@ class MapUpdater extends Component {
     //build mapquest query
     const key = '82OD8xUAEGtjlGG8QmixjVe90rErA3NU';
     const coordArg = transformedBounds.join('%2C');
-    const url = `http://www.mapquestapi.com/traffic/v2/incidents?key=${ key }&boundingBox=${ coordArg }&filters=incidents&outFormat=json`
+    const url = `http://www.mapquestapi.com/traffic/v2/incidents?key=${ key }&boundingBox=${ coordArg }&filters=incidents,event,construction&outFormat=json`
     
     // save extent to state
     this.setState({accidentExtent: map.getView().calculateExtent(map.getSize())})
@@ -216,7 +293,6 @@ class MapUpdater extends Component {
     const json = await response.json()
     json.incidents && json.incidents.forEach((incident) => {
       if (!this.state.points.find((point) => point.coords.lat === incident.lat && point.coords.long === incident.lng)) {
-        console.log("date?", new Date(incident.startTime).getTime())
         this.addNewPoint({source: 'mapquest', event: 'TRAFFIC INCIDENT', time: new Date(incident.startTime).getTime(), coords: { lat: incident.lat, long: incident.lng }, text: incident.fullDesc})
       }
     })
@@ -252,7 +328,7 @@ class MapUpdater extends Component {
                 { point.text }
               </Message>
               { point.time && (
-                <Time>
+                <Time textColor={point.event === 'TRAFFIC INCIDENT' ? 'gray' : 'lightgray'}>
                   { `${(new Date().getTime()-point.time)/1000 < 60 ? Math.round((new Date().getTime() - point.time)/1000) + ' s' : Math.round((new Date().getTime() - point.time)/60000) + ' min' } ago` }
                 </Time>
               )}

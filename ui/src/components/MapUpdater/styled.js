@@ -12,7 +12,7 @@ export const Card = styled.div`
 
 export const Time = styled.div`
   font-size: small;
-  color: white;
+  color: ${ props => props.textColor};
   text-align: right;
   width: 30px;
 `

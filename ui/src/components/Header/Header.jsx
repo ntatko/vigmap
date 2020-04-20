@@ -2,34 +2,42 @@ import React, { Component } from 'react'
 import { HeaderWrapper } from './styled'
 import Dropdown from '../Dropdown/Dropdown'
 import Logo from '../../images/logo.jsx'
+import AllTheOtherInformation from '../AllTheOtherInformation/AllTheOtherInformation'
 
-import { BingMaps, BlankWhite, StamenTonerDark, Map } from '@bayer/ol-kit'
+import { OpenStreetMap, StamenTonerDark, StamenTerrain, StamenTonerLite, connectToMap } from '@bayer/ol-kit'
 import { Checkbox, TextInput } from '@thumbtack/thumbprint-react'
 import Slider from '@material-ui/core/Slider'
 
 class Header extends Component {
+
+  identify = (urls) => {
+    switch(urls) { // silly, should have a tag on the shape telling which one is selected
+      case ('osm'):
+        return 'OpenStreetMap'
+      case ("stamenTerrain"):
+        return 'Stamen Terrain'
+      case ('stamenTonerDark'):
+        return 'Stamen Dark'
+      case ('stamenTonerLite'):
+        return 'Stamen Lite'
+      default:
+        return urls
+    }
+  }
   
   render() {
-    const basemaps = [
-      {map: BingMaps, title: 'Bing Maps'},
-      {map: BlankWhite, title: 'Blank White'},
-      {map: StamenTonerDark, title: 'Stamen Toner Dark'}
-    ]
-
     return (
       <HeaderWrapper>
         <div style={{ marginRight: 5, marginTop: -3 }}>
           <Logo />
         </div>
-        <Dropdown title={'Basemap?'}>
-          { basemaps.map((basemap) => (
-            <div style={{ display: 'block', width: 200, height:60, padding: 5, borderBlockColor: 'black' }} key={ basemap.title } selected={basemap.title==='Bing Maps'}>
-              <div style={{ position: 'absolute', top: 0, left: 0 }}>
-                { basemap.title }
-              </div>
-              { basemap.map }
-            </div>
-          ))}
+        <Dropdown title={'Basemap?'} selected={this.identify(this.props.map.getLayers().getArray().find((layer) => layer.get('_ol_kit_basemap')).get('_ol_kit_basemap'))}>
+          <div>
+            <OpenStreetMap />
+            <StamenTonerDark />
+            <StamenTerrain />
+            <StamenTonerLite />
+          </div>
         </Dropdown>
         <Dropdown title={'Alert Distance'} selected={
           <div style={{ color: 'lightgreen'}}>
@@ -44,7 +52,7 @@ class Header extends Component {
             ) : (
               <div>
                 <Slider value={this.props.alertDistance} onChange={(_, e) => this.props.setAlertDistance(e)} />
-                <div style={{ maxWidth: '150px'}}>
+                <div style={{ maxWidth: '160px'}}>
                   <TextInput
                     size="small"
                     id="example-1"
@@ -58,9 +66,12 @@ class Header extends Component {
             )}
           </div>
         </Dropdown>
+        <Dropdown title={'VigilanteFodder (doesn\'t work yet)'} selected='Choose something interesting'>
+          <AllTheOtherInformation />
+        </Dropdown>
       </HeaderWrapper>  
     )
   }
 }
 
-export default Header
+export default connectToMap(Header)

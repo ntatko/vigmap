@@ -8,6 +8,7 @@ export const DisplayWindow = styled.div`
   display: flex;
   align-items: center;
   min-width: 110px;
+  color: lightgreen
 `
 
 export const MenuItem = styled.div`
@@ -36,4 +37,5 @@ export const DropdownDrawer = styled.div`
   margin-top: 5px;
   color: lightgray;
   border-radius: 3px;
+  text-justify: center;
 `
