@@ -6,6 +6,7 @@ import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
 import Controller from './components/Controller/Controller'
 import MapUpdater from './components/MapUpdater/MapUpdater'
+import { Button } from '@thumbtack/thumbprint-react'
 
 // import VectorLayer from 'ol/layer/Vector'
 // import VectorSource from 'ol/source/Vector'
@@ -53,10 +54,8 @@ class App extends Component {
       <React.Fragment>
         <Map onMapInit={this.onMapInit} fullScreen>
           <Popup actions={
-            <PopupActionItem 
-              title={'GO HERE NOW!'}
-              onClick={() => {console.log("seems like a bug"); window.location.href = `https://www.google.com/maps/search/?api=1&query=${ proj.transform(this.state.lastClick, 'EPSG:3857', 'EPSG:4326')[0] },${ proj.transform(this.state.lastClick, 'EPSG:3857', 'EPSG:4326')[1] }`}}
-            />
+            <Button onClick={() => window.location.href = `https://www.google.com/maps/search/?api=1&query=${ proj.transform(this.state.lastClick, 'EPSG:3857', 'EPSG:4326')[1]},${ proj.transform(this.state.lastClick, 'EPSG:3857', 'EPSG:4326')[0] } `}
+            >{'GO HERE NOW!'}</Button>
           }/>
           <Header geolocate={this.state.geolocate} toggleGeolocation={this.toggleGeolocation} alertDistance={this.state.alertDistance} setAlertDistance={this.setAlertDistance} />
           <MapUpdater geolocate={this.state.geolocate} setCurrentLocation={this.setCurrentLocation} alertDistance={this.state.alertDistance} showSnackbar={this.showSnackbar} />

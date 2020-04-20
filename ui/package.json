@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bayer/ol-kit": "^0.3.0-10",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.50",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -13,6 +10,7 @@
     "@turf/distance": "^6.0.1",
     "@turf/helpers": "^6.1.4",
     "@turf/turf": "^5.1.6",
+    "geojson-vt": "^3.2.1",
     "material-ui": "^0.20.2",
     "node-sass": "^4.13.1",
     "ol": "^4.6.5",
@@ -23,6 +21,11 @@
     "react-virtualized": "^9.21.2",
     "socket.io-client": "^2.3.0",
     "styled-components": "^5.1.0"
+  },
+  "devDependencies": {
+    "@bayer/ol-kit": "^0.3.0-11",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.50"
   },
   "scripts": {
     "start": "react-scripts start",
