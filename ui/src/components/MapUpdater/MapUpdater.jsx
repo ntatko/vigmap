@@ -251,7 +251,7 @@ class MapUpdater extends Component {
               </div>
               { point.time && (
                   <div>
-                    { `${(new Date().getTime()-point.time)/1000 < 60 ? (Math.round(new Date().getTime() - point.time)/1000) + ' s' : (Math.round(point.time - Date())/60000) + ' min' } ago` }
+                    { `${(new Date().getTime()-point.time)/1000 < 60 ? (Math.round(new Date().getTime() - point.time)/1000) + ' s' : (Math.round(new Date().getTime() - point.time)/60000) + ' min' } ago` }
                   </div>
                 )}
             </div>
