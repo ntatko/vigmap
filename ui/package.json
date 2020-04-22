@@ -7,8 +7,6 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "@thumbtack/thumbprint-react": "^12.4.0",
-    "@turf/distance": "^6.0.1",
-    "@turf/helpers": "^6.1.4",
     "@turf/turf": "^5.1.6",
     "geojson-vt": "^3.2.1",
     "material-ui": "^0.20.2",
