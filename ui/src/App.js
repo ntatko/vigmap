@@ -8,9 +8,6 @@ import Controller from './components/Controller/Controller'
 import MapUpdater from './components/MapUpdater/MapUpdater'
 import { Button } from '@thumbtack/thumbprint-react'
 
-// import VectorLayer from 'ol/layer/Vector'
-// import VectorSource from 'ol/source/Vector'
-
 class App extends Component {
   constructor() {
     super()
@@ -24,20 +21,10 @@ class App extends Component {
     }
   }
   onMapInit = map => {
-    // const data = new VectorLayer({
-    //   source: new VectorSource({
-    //     features: [/** Get some data and have fun with it */]
-    //   })
-    // })
 
     map.on('click', (evt) => {
       this.setState({lastClick: evt.coordinate})
     })
-
-    // // add the data to the map
-    // map.addLayer(data)
-
-    // quickly take the map
     window.map = map
   }
 

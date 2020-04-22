@@ -1,12 +1,6 @@
 import React, { Component } from 'react'
 import { connectToMap, loadDataLayer } from '@bayer/ol-kit'
 import { Checkbox } from '@thumbtack/thumbprint-react'
-import VectorTileSource from 'ol/source/vectortile';
-import VectorTileLayer from 'ol/layer/vectortile';
-import Projection from 'ol/proj/projection';
-import geojsonvt from 'geojson-vt';
-
-import GeoJSON from 'ol/format/geojson'
 
 // import US_WATERWAYS from '../../geojson/Waterway_Network'
 // import FOOD_SCRAP from '../../geojson/Food_Scrap_Generators'
@@ -92,62 +86,6 @@ class AllTheOtherInformation extends Component {
       const dataLayer = await loadDataLayer(map, datum.url)
       dataLayer.set('id', datum.id)
       dataLayer.set(LAYER_KEY, datum.id)
-
-      // await fetch(datum.url, {mode: 'no-cors', headers: {
-      //   'Content-Type': 'application/json',
-      //   'Accept': 'application/json',
-      //   'Access-Control-Allow-Origin': '*',
-      //   'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
-      //   'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS'
-      // }}).then((response) => {
-      //   console.log('response', response)
-      //   return response.json()
-      // }).then((json) => {
-      //   console.log("before json?", json)
-      //   var tileIndex = geojsonvt(json, {
-      //     extent: 4096,
-      //     debug: 1
-      //   });
-      //   var vectorSource = new VectorTileSource({
-      //     format: new GeoJSON({
-      //       // Data returned from geojson-vt is in tile pixel units
-      //       dataProjection: new Projection({
-      //         code: 'TILE_PIXELS',
-      //         units: 'tile-pixels',
-      //         extent: [0, 0, 4096, 4096]
-      //       })
-      //     }),
-      //     tileUrlFunction: function(tileCoord) {
-      //       var data = tileIndex.getTile(tileCoord[0], tileCoord[1], tileCoord[2]);
-      //       var geojson = JSON.stringify({
-      //         type: 'FeatureCollection',
-      //         features: data ? data.features : []
-      //       }, replacer);
-      //       return 'data:application/json;charset=UTF-8,' + geojson;
-      //     }
-      //   });
-      //   var vectorLayer = new VectorTileLayer({
-      //     source: vectorSource,
-      //     id: datum.id,
-      //     url: datum.url,
-      //     LAYER_KEY: datum.id
-      //   });
-      //   map.addLayer(vectorLayer);
-      // })
-
-      // const layer = new VectorTileLayer ({
-      //   title: datum.id,
-      //   id: datum.id,
-      //   LAYER_KEY: datum.id,
-      //   source: new VectorSource()
-      // })
-
-      // const features = (new GeoJSON()).readFeatures(datum.json.features)
-      // const source = layer.getSource()
-      // features.forEach((feature) => {
-      //   source.addFeature(feature)
-      // })
-      // map.addLayer(layer)
     }
     
   }
