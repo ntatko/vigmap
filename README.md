@@ -10,7 +10,6 @@ So this data is random. MOSTLY! I found a source that gave accident and traffic 
 
 ## Setup
 1. Make sure to `npm i` in each sub directory
-:point-down: ignore this
 <!-- 2. Make sure you `brew install ffmpeg` and `brew install portaudio`
 3. In the `/api` directory run `pip3 install -r requirements.txt` to install Python deps -->
 
