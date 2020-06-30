@@ -14,9 +14,11 @@ import VectorLayer from 'ol/layer/vector'
 import VectorSource from 'ol/source/vector'
 import easing from 'ol/easing'
 import RssFeed from '@material-ui/icons/RssFeed'
+import BorderColorIcon from '@material-ui/icons/BorderColor'
 import { Checkbox } from '@thumbtack/thumbprint-react'
 import { Card, Time, Message, Icon} from './styled'
 import olIcon from 'ol/style/icon'
+import CountyModifier from '../CountyModifier/CountyModifier'
 
 import BATMAN from '../../images/batman.js'
 
@@ -330,6 +332,16 @@ class MapUpdater extends Component {
           ))}
         </LayerPanelContent>
       </LayerPanelPage>
+      {
+        this.props.map.getLayers().getArray().find((layer) => layer.get('id', 'COUNTIES')) && (
+          <LayerPanelPage tabIcon={<BorderColorIcon />}>
+            <LayerPanelHeader title={'View County Data'} />
+            <LayerPanelContent style={{ maxHeight: 500 }}>
+              <CountyModifier />
+            </LayerPanelContent>
+          </LayerPanelPage>
+        )
+      }
     </LayerPanel>
   }
 }

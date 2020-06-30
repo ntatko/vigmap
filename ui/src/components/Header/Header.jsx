@@ -66,7 +66,7 @@ class Header extends Component {
             )}
           </div>
         </Dropdown>
-        <Dropdown title={'VigilanteFodder (doesn\'t work yet)'} selected='Choose something interesting'>
+        <Dropdown title={'VigilanteFodder'} selected='Choose something interesting'>
           <AllTheOtherInformation />
         </Dropdown>
       </HeaderWrapper>  

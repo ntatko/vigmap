@@ -7,6 +7,8 @@ import Controller from './components/Controller/Controller'
 import MapUpdater from './components/MapUpdater/MapUpdater'
 import { Button } from '@thumbtack/thumbprint-react'
 
+import { createMuiTheme } from '@material-ui/core/styles';
+
 class App extends Component {
   constructor() {
     super()
@@ -34,7 +36,15 @@ class App extends Component {
   render () {
     return (
       <React.Fragment>
-        <Map onMapInit={this.onMapInit} fullScreen>
+        <Map onMapInit={this.onMapInit} fullScreen
+          theme={
+            createMuiTheme({
+              palette: {
+                type: 'dark'
+              }
+            })
+          }
+        >
           <Popup actions={
             <Button onClick={() => window.location.href = `https://www.google.com/maps/search/?api=1&query=${ proj.transform(this.state.lastClick, 'EPSG:3857', 'EPSG:4326')[1]},${ proj.transform(this.state.lastClick, 'EPSG:3857', 'EPSG:4326')[0] } `}
             >{'GO HERE NOW!'}</Button>
